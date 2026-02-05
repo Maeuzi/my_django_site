@@ -1,53 +1,32 @@
 from django.templatetags.static import static
+from django.http import HttpResponse
 
 def home(request):
-    # These variables get the correct URL for your local images
-    luffy_url = static('luffy.png')
-    kitty_url = static('kitty.png')
-    tomato_url = static('tomato.png')
+    # Get image URLs safely
+    luffy = static('luffy.png')
+    kitty = static('kitty.png')
+    tomato = static('tomato.png')
 
-    html_content = f"""
+    html_content = """
     <!DOCTYPE html>
-    <html lang="en">
+    <html>
     <head>
-        <meta charset="UTF-8">
         <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
         <style>
-            body {{ background-color: #ff9ff3; font-family: 'Press Start 2P', cursive; text-align: center; }}
-            .choice-container {{ margin-top: 50px; display: flex; justify-content: center; gap: 20px; }}
-            .icon-box {{ cursor: pointer; border: 4px solid black; background: white; padding: 10px; }}
-            .icon-box img {{ width: 80px; height: 80px; image-rendering: pixelated; }}
-            canvas {{ background: white; border: 4px solid black; display: none; margin: 20px auto; }}
+            body { background-color: #f0f2f5; font-family: 'Press Start 2P', cursive; text-align: center; }
+            .grid { display: grid; grid-template-columns: repeat(2, 100px); gap: 10px; justify-content: center; }
+            .card { width: 100px; height: 100px; border: 3px solid black; background: white; }
+            img { width: 80px; display: block; margin: auto; }
         </style>
     </head>
     <body>
-        <h1>CHOOSE YOUR PLAYER</h1>
-        
-        <div id="selection" class="choice-container">
-            <div class="icon-box" onclick="startGame('{luffy_url}')">
-                <img src="{luffy_url}" alt="Luffy">
-                <p style="font-size:10px">LUFFY</p>
-            </div>
-            <div class="icon-box" onclick="startGame('{kitty_url}')">
-                <img src="{kitty_url}" alt="Kitty">
-                <p style="font-size:10px">KITTY</p>
-            </div>
+        <h1>SWETA'S PUZZLE</h1>
+        <div class="grid">
+            <div class="card"><img src='""" + luffy + """'></div>
+            <div class="card"><img src='""" + kitty + """'></div>
+            <div class="card"><img src='""" + tomato + """'></div>
+            <div class="card"><img src='""" + luffy + """'></div>
         </div>
-
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-
-        <script>
-            let playerImg = new Image();
-            let tomatoImg = new Image();
-            tomatoImg.src = '{tomato_url}';
-
-            function startGame(imgSrc) {{
-                playerImg.src = imgSrc;
-                document.getElementById('selection').style.display = 'none';
-                document.getElementById('gameCanvas').style.display = 'block';
-                // ... (rest of your game logic here)
-            }}
-        </script>
     </body>
     </html>
     """
