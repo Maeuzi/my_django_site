@@ -1,11 +1,7 @@
 from django.templatetags.static import static
 from django.http import HttpResponse
 
-def home(request):
-    # Get image URLs safely
-    luffy = static('luffy.png')
-    kitty = static('kitty.png')
-    tomato = static('tomato.png')
+
 
     html_content = """
     <!DOCTYPE html>
