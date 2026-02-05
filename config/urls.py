@@ -7,21 +7,32 @@ def home(request):
     <!DOCTYPE html>
     <html>
     <head>
+        <meta charset="UTF-8">
         <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
         <style>
             body { background-color: #ff9ff3; font-family: 'Press Start 2P', cursive; text-align: center; padding-top: 20px; }
-            .grid { display: grid; grid-template-columns: repeat(4, 70px); gap: 10px; justify-content: center; margin-top: 20px; }
-            .card { 
-                width: 70px; height: 70px; border: 3px solid black; background: #fff; 
-                cursor: pointer; display: flex; align-items: center; justify-content: center; 
-                font-size: 30px; transition: 0.2s;
-            }
-            .hidden { background: #333; color: #333; }
-            .matched { visibility: hidden; }
             .container {
                 background:white; border:4px solid black; display:inline-block; 
                 padding:20px; box-shadow:8px 8px 0px #000;
             }
+            .grid { display: grid; grid-template-columns: repeat(4, 75px); gap: 10px; justify-content: center; margin-top: 20px; }
+            
+            /* The Card Design */
+            .card { 
+                width: 75px; height: 75px; border: 3px solid black; background: #333; 
+                cursor: pointer; display: flex; align-items: center; justify-content: center; 
+                font-size: 30px;
+            }
+            
+            /* How to hide the icon */
+            .card span { opacity: 0; pointer-events: none; }
+            
+            /* How to show the icon when clicked */
+            .card.revealed { background: white !important; }
+            .card.revealed span { opacity: 1; }
+            
+            /* Remove the card when matched */
+            .card.matched { visibility: hidden; }
         </style>
     </head>
     <body>
@@ -32,7 +43,6 @@ def home(request):
         </div>
 
         <script>
-            // Replaced the hat with a rabbit!
             const icons = ['🐰', '🐰', '🧺', '🧺', '🍅', '🍅', '🏴‍☠️', '🏴‍☠️', '🎀', '🎀', '⚓', '⚓', '🍎', '🍎', '⭐', '⭐'];
             let flipped = [];
             let matches = 0;
@@ -40,26 +50,31 @@ def home(request):
             icons.sort(() => Math.random() - 0.5);
 
             const grid = document.getElementById('gameGrid');
-            icons.forEach((icon, i) => {
+            
+            for (let i = 0; i < icons.length; i++) {
                 const card = document.createElement('div');
-                card.className = 'card hidden';
-                card.dataset.icon = icon;
-                card.innerHTML = icon;
-                card.onclick = () => {
-                    if (flipped.length < 2 && card.classList.contains('hidden')) {
-                        card.classList.remove('hidden');
+                card.className = 'card';
+                // We wrap the icon in a <span> to control visibility easily
+                card.innerHTML = "<span>" + icons[i] + "</span>";
+                
+                card.onclick = function() {
+                    if (flipped.length < 2 && !card.classList.contains('revealed')) {
+                        card.classList.add('revealed');
                         flipped.push(card);
+
                         if (flipped.length === 2) {
-                            if (flipped[0].dataset.icon === flipped[1].dataset.icon) {
+                            if (flipped[0].innerHTML === flipped[1].innerHTML) {
                                 setTimeout(() => {
-                                    flipped.forEach(c => c.classList.add('matched'));
+                                    flipped[0].classList.add('matched');
+                                    flipped[1].classList.add('matched');
                                     flipped = [];
                                     matches++;
                                     if(matches === 8) document.getElementById('msg').innerText = "MISSION COMPLETE! 👑";
-                                }, 500);
+                                }, 400);
                             } else {
                                 setTimeout(() => {
-                                    flipped.forEach(c => c.classList.add('hidden'));
+                                    flipped[0].classList.remove('revealed');
+                                    flipped[1].classList.remove('revealed');
                                     flipped = [];
                                 }, 700);
                             }
@@ -67,7 +82,7 @@ def home(request):
                     }
                 };
                 grid.appendChild(card);
-            });
+            }
         </script>
     </body>
     </html>
