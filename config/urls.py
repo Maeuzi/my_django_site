@@ -17,21 +17,22 @@ def home(request):
             }
             .grid { display: grid; grid-template-columns: repeat(4, 75px); gap: 10px; justify-content: center; margin-top: 20px; }
             
-            /* The Card Design */
+            /* The Card Style */
             .card { 
-                width: 75px; height: 75px; border: 3px solid black; background: #333; 
+                width: 75px; height: 75px; border: 3px solid black; 
+                background: #ef5777; /* Solid Dark Pink Back */
                 cursor: pointer; display: flex; align-items: center; justify-content: center; 
-                font-size: 30px;
+                font-size: 30px; position: relative;
             }
             
-            /* How to hide the icon */
-            .card span { opacity: 0; pointer-events: none; }
+            /* Hide the emoji text completely by default */
+            .card span { visibility: hidden; }
             
-            /* How to show the icon when clicked */
+            /* When Revealed: Turn background white and show emoji */
             .card.revealed { background: white !important; }
-            .card.revealed span { opacity: 1; }
+            .card.revealed span { visibility: visible !important; }
             
-            /* Remove the card when matched */
+            /* When Matched: Hide the whole card */
             .card.matched { visibility: hidden; }
         </style>
     </head>
@@ -54,16 +55,17 @@ def home(request):
             for (let i = 0; i < icons.length; i++) {
                 const card = document.createElement('div');
                 card.className = 'card';
-                // We wrap the icon in a <span> to control visibility easily
                 card.innerHTML = "<span>" + icons[i] + "</span>";
                 
                 card.onclick = function() {
+                    // Only allow flipping if less than 2 cards are flipped and card isn't already revealed
                     if (flipped.length < 2 && !card.classList.contains('revealed')) {
                         card.classList.add('revealed');
                         flipped.push(card);
 
                         if (flipped.length === 2) {
-                            if (flipped[0].innerHTML === flipped[1].innerHTML) {
+                            // Check for match using the icon text
+                            if (flipped[0].innerText === flipped[1].innerText) {
                                 setTimeout(() => {
                                     flipped[0].classList.add('matched');
                                     flipped[1].classList.add('matched');
